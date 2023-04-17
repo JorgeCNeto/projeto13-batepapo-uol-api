@@ -23,7 +23,7 @@ app.post("/participants", async (res, req) => {
 const { name } = req.body
 
 const participantsSchema = joi.object({
-    name: joi.string().required()
+    name: joi.string().required().min(1)
 })
 
 const validation = participantsSchema.validate(req.body, {abortEarly: false })
@@ -38,7 +38,7 @@ try{
     const verificarParticipant = await db.collection("participants").findOne({name: name})
     if(verificarParticipant) return res.status(409).send("Essa pessoa já existe!")
 
-    await db.collection("participants").insertOne(name, lastStatus: Date.now())
+    await db.collection("participants").insertOne({name, lastStatus: Date.now()})
         res.status(201).send("Entrou na sala")       
 } catch (err) {
     res.status(500).send(err.message)

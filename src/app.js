@@ -74,14 +74,15 @@ app.post("/messages", async (req, res) => {
         const errors = validation.error.details.map(detail => detail.message)
         return res.status(422).send(errors)
     }
-
+    
     try{
-        await db.collection("messages").insertOne({req.body, time: Date.now()})
+        //@ts-ignore
+        await db.collection("messages").insertOne({req, time: Date.now()})
         res.sendStatus(201)     
     } catch (err) {
         res.status(500).send(err.message)
     }
-
+    
 })
 
 app.get("/messages", async (req, res) =>{

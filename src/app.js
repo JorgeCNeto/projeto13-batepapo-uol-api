@@ -36,16 +36,16 @@ const participantsSchema = joi.object({
 const validation = participantsSchema.validate(req.body, {abortEarly: false })
 
 if(validation.error){
-    console.log(validation.error.details)
+    //console.log(validation.error.details)
     const errors = validation.error.details.map(detail => detail.message)
     return res.status(422).send(errors)
 }
 
 try{
-    const verificarParticipant = await db.collection("participants").findOne({name})
+    const verificarParticipant = await db.collection("participants").findOne({name : name})
     if(verificarParticipant) return res.status(409).send("Essa pessoa já existe!")
     User.push(name)
-    await db.collection("participants").insertOne({name, lastStatus: hora})
+    await db.collection("participants").insertOne({name, lastStatus: Date.now()})
     await db.collection("messages").insertOne({from: name, to: "Todos", text: "entra na sala...", type: "status", time: hora})
     res.sendStatus(201)       
 } catch (err) {
@@ -58,7 +58,7 @@ app.get("/participants", async (req, res) =>{
 
     try{
         const participants = await db.collection("participants").find().toArray()
-        res.send(participants)
+        res.status(200).send(participants)
     } catch (err) {
         res.status(500).send(err.message)
     }   
@@ -66,7 +66,7 @@ app.get("/participants", async (req, res) =>{
 
 app.post("/messages", async (req, res) => {
     const {to, text, type } = req.body
-    const from = User.toString()
+    const {user} = req.headers
 
     const messagesSchema = joi.object({
         to: joi.string().required().min(1),
@@ -85,7 +85,7 @@ app.post("/messages", async (req, res) => {
     
     try{
         //@ts-ignore
-        await db.collection("messages").insertOne({from ,to, text, type,  time: hora})
+        await db.collection("messages").insertOne({from: user ,to, text, type,  time: hora})
         res.sendStatus(201)     
     } catch (err) {
         res.status(500).send(err.message)

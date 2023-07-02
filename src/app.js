@@ -43,6 +43,7 @@ try{
     if(verificarParticipant) return res.status(409).send("Essa pessoa já existe!")
     User.push(name)
     await db.collection("participants").insertOne({name, lastStatus: Date.now()})
+    await db.collection("messages").insertOne({from: name, to: "Todos", text: "entra na sala...", type: "status", time: lastStatus})
     res.sendStatus(201)       
 } catch (err) {
     res.status(500).send(err.message)

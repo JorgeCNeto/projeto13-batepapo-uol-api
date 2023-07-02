@@ -83,8 +83,7 @@ app.post("/messages", async (req, res) => {
         return res.status(422).send(errors)
     }
     
-    try{
-        //@ts-ignore
+    try{        
         await db.collection("messages").insertOne({from: user ,to, text, type,  time: hora})
         res.sendStatus(201)     
     } catch (err) {

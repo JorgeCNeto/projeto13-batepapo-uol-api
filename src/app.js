@@ -42,7 +42,7 @@ if(validation.error){
 }
 
 try{
-    const verificarParticipant = await db.collection("participants").findOne({name: name})
+    const verificarParticipant = await db.collection("participants").findOne({name})
     if(verificarParticipant) return res.status(409).send("Essa pessoa já existe!")
     User.push(name)
     await db.collection("participants").insertOne({name, lastStatus: hora})

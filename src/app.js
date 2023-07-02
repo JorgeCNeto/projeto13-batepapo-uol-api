@@ -15,11 +15,13 @@ let User = []
 const mongoClient = new MongoClient(process.env.DATABASE_URL)
 try{
     await mongoClient.connect()
-    console.log("MongoDB conectado")
+    console.log("MongoDB conectado!")
 } catch (err){
-    console.log(err.message)
+    (err) => console.log(err.message)
 }
 const db = mongoClient.db()
+
+//////////////////////
 
 app.post("/participants", async (res, req) => {
 const { name } = req.body
@@ -48,6 +50,8 @@ try{
 })
 
 app.get("/participants", async (req, res) =>{
+    const { id } = req.params
+
     try{
         const participants = await db.collection("participants").find().toArray()
         res.send(participants)
@@ -77,7 +81,7 @@ app.post("/messages", async (req, res) => {
     
     try{
         //@ts-ignore
-        await db.collection("messages").insertOne({req, time: Date.now()})
+        await db.collection("messages").insertOne({to, text, type,  time: Date.now()})
         res.sendStatus(201)     
     } catch (err) {
         res.status(500).send(err.message)

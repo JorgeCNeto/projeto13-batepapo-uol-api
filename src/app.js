@@ -26,7 +26,7 @@ const hora = dayjs().format("HH:mm:ss")
 
 //////////////////////
 
-app.post("/participants", async (res, req) => {
+app.post("/participants", async (req, res) => {
 const { name } = req.body
 
 const participantsSchema = joi.object({

@@ -144,10 +144,10 @@ setInterval(async () => {
     try {
         const userVerify = await db.collection("participants").find({ lastStatus: {$lt: kick}}).toArray()
 
-        if (userVerify) {
+        if (userVerify.length > 0) {
             const messages = userVerify.map(user =>{
                 return{
-                    from: user,
+                    from: user.name,
                     to: "Todos",
                     text: "sai da sala...",
                     type: "status",
@@ -156,7 +156,7 @@ setInterval(async () => {
             })
 
             await db.collection("messages").insertMany(messages)
-            await db.collection("participants").deleteMany(userVerify)
+            await db.collection("participants").deleteMany({ lastStatus: {$lt: kick}})
         }
     } catch (err) {
         res.status(500).send(err.message)

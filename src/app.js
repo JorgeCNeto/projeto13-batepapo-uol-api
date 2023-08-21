@@ -71,11 +71,11 @@ app.post("/messages", async (req, res) => {
     const messagesSchema = joi.object({
         to: joi.string().required().min(1),
         text: joi.string().required().min(1),
-        type: joi.string().required().with("message", "private_message"),
+        type: joi.string().required().valid("message", "private_message"),
         from: joi.string().required()
     })
     
-    const validation = messagesSchema.validate(req.body, {abortEarly: false })
+    const validation = messagesSchema.validate({...req.body, from: user}, {abortEarly: false })
     
     if(validation.error){
         console.log(validation.error.details)
@@ -84,7 +84,7 @@ app.post("/messages", async (req, res) => {
     }
     
     try{        
-        await db.collection("messages").insertOne({from: user ,to, text, type,  time: hora})
+        await db.collection("messages").insertOne({from: user , to, text, type,  time: hora})
         res.sendStatus(201)     
     } catch (err) {
         res.status(500).send(err.message)

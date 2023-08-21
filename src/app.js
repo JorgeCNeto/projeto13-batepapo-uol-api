@@ -65,8 +65,8 @@ app.get("/participants", async (req, res) =>{
 })
 
 app.post("/messages", async (req, res) => {
-    const {to, text, type } = req.body
-    const {user} = req.headers
+    const { to, text, type } = req.body
+    const { user } = req.headers
 
     const messagesSchema = joi.object({
         to: joi.string().required().min(1),
@@ -117,7 +117,25 @@ app.get("/messages", async (req, res) =>{
 })
 
 app.post("/status", async (req, res) => {
-  
+    const { user } = req.headers
+
+    if (!user){
+        return res.sendStatus(404)
+    }
+
+    try{
+        const participant = await db.collection("participants").findOne({ name: user })
+        if (!participant) {
+            return res.sendStatus(404)
+        }
+
+        await db.collection("participants").updateOne({ name: user }, {$set: {lastStatus: hora }})
+
+        res.sendStatus(200)
+        
+    } catch (err) {
+        res.status(500).send(err.message)
+    } 
 })
 
 const PORT = 5000

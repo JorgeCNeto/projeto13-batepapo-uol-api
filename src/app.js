@@ -83,7 +83,12 @@ app.post("/messages", async (req, res) => {
         return res.status(422).send(errors)
     }
     
-    try{        
+    try{     
+        const participants = await db.collection("participants").findOne({name: user})
+        if(!paticipant){
+            return res.sendStatus(422)
+        }
+        
         await db.collection("messages").insertOne({from: user , to, text, type,  time: hora})
         res.sendStatus(201)     
     } catch (err) {

@@ -129,10 +129,10 @@ app.post("/status", async (req, res) => {
             return res.sendStatus(404)
         }
 
-        await db.collection("participants").updateOne({ name: user }, {$set: {lastStatus: hora }})
+        await db.collection("participants").updateOne({ name: user }, {$set: {lastStatus: Date.now() }})
 
         res.sendStatus(200)
-        
+
     } catch (err) {
         res.status(500).send(err.message)
     } 

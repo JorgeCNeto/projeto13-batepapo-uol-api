@@ -85,7 +85,7 @@ app.post("/messages", async (req, res) => {
     
     try{     
         const participants = await db.collection("participants").findOne({name: user})
-        if(!paticipant){
+        if(!participants){
             return res.sendStatus(422)
         }
         

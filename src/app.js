@@ -98,14 +98,15 @@ app.post("/messages", async (req, res) => {
 })
 
 app.get("/messages", async (req, res) =>{
+    const { user } = req.headers
     const { limit } = req.query
     if ( !limit || limit <= 0 || limit === undefined){
         return res.sendStatus(422)
     }
 
     try{
-        const participants = await db.collection("messages").find().toArray()
-        res.send(participants)
+        const messageParticipant = await db.collection("messages").find({ $or: [{from: user}, {to:user}, {type: "message"}, {to: "Todos"}]}).toArray()
+        res.send(messageParticipant)
     } catch (err) {
         res.status(500).send(err.message)
     }   

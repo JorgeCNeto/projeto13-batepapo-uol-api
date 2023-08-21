@@ -105,7 +105,11 @@ app.get("/messages", async (req, res) =>{
     }
 
     try{
-        const messageParticipant = await db.collection("messages").find({ $or: [{from: user}, {to:user}, {type: "message"}, {to: "Todos"}]}).toArray()
+        const messageParticipant = await db.collection("messages")
+        .find({ $or: [{from: user}, {to:user}, {type: "message"}, {to: "Todos"}]})
+        .sort({time: -1})
+        .limit(limit === undefined ? 0 : Number(limit))
+        .toArray()
         res.send(messageParticipant)
     } catch (err) {
         res.status(500).send(err.message)

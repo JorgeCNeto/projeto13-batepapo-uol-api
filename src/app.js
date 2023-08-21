@@ -100,7 +100,7 @@ app.post("/messages", async (req, res) => {
 app.get("/messages", async (req, res) =>{
     const { user } = req.headers
     const { limit } = req.query
-    if ( !limit || limit <= 0 || limit === undefined){
+    if ( Number(limit) <= 0 || isNaN(limit) || limit === undefined){
         return res.sendStatus(422)
     }
 

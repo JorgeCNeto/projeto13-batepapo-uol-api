@@ -138,5 +138,16 @@ app.post("/status", async (req, res) => {
     } 
 })
 
+setInterval(async () => {
+    const kick = Date.now() - 10001
+
+    try {
+        const userVerify = await db.collection("participants").find({ lastStatus: {$lt: kick}})
+    } catch (err) {
+        res.status(500).send(err.message)
+    } 
+
+}, 15000)
+
 const PORT = 5000
 app.listen(PORT, () => console.log(`Rodando servidor na porta ${PORT}`))
